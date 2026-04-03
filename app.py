@@ -283,14 +283,13 @@ def flag():
 
     session["flagged"] = flagged
 
-    # Always move forward
+    # Track furthest progress
+    session["current_max"] = max(session.get("current_max", 0), idx)
+
+    # Move forward
     session["idx"] = idx + 1
 
-    return jsonify(success=True)
-# Track furthest progress
-    session["current_max"] = max(session.get("current_max", 0), session["idx"])
-
-    return jsonify(flagged=flagged)
+    return jsonify(success=True, flagged=flagged)
 
 @app.route("/goto/<int:i>")
 def goto(i):
