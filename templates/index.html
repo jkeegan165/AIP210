@@ -302,19 +302,22 @@ button:hover {
 <script>
 
 let totalTime = 7200;
-let timerInterval;
+let timerInterval = null;
 let flagged = new Set();
 
 /* TIMER */
 function startTimer(){
 
-    if(timerInterval) return; // ✅ prevent multiple timers
+    if(timerInterval){
+        clearInterval(timerInterval);
+    }
 
     timerInterval = setInterval(()=>{
 
         if(totalTime <= 0){
             clearInterval(timerInterval);
             timerInterval = null;
+
             alert("Time is up! Submitting exam...");
             showReview();
             return;
@@ -326,139 +329,109 @@ function startTimer(){
         document.getElementById("timer").innerText =
             `⏱ ${mins}:${secs.toString().padStart(2,'0')}`;
 
-        if(totalTime < 300){
-            document.getElementById("timer").style.color = "red";
-        }
-
         totalTime--;
 
-    },1000);
+    }, 1000);
 }
 
 /* START */
 function startExam(){
-    console.log("START CLICKED");
+
+    if(timerInterval){
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
 
     fetch("/start")
     .then(res => res.json())
     .then(data => {
-    console.log("START RESPONSE:", data);
-    loadQuestion();
-    startTimer();
-})
+        loadQuestion();
+        startTimer();
+    })
     .catch(err => console.error("START ERROR:", err));
 }
 
 /* LOAD QUESTION */
 function loadQuestion(){
+
     fetch("/question")
-    .then(r=>r.json())
-    .then(data=>{
+    .then(r => r.json())
+    .then(data => {
 
         if(data.done){
+            showReview();
+            return;
+        }
 
-    console.log("EXAM COMPLETE TRIGGERED");
-
-    fetch("/store_results")
-    .then(()=>{
-
-        console.log("RESULTS STORED");
-
-        window.open("/results_page", "_blank");
-
-        showReview();
-    });
-
-    return;
-}
-        document.getElementById("submitBtn").disabled = false;
+        totalTime = data.remaining;
 
         let q = data.q;
 
-        totalTime = data.remaining;
-        startTimer();
-document.getElementById("question").innerText = q.prompt;
+        document.getElementById("question").innerText = q.prompt;
 
-let html = "";
+        let html = "";
 
-q.options.forEach(opt=>{
-    html += `
-        <label style="
-            display:block;
-            padding:10px;
-            margin:6px 0;
-            background:#1e293b;
-            border-radius:6px;
-            cursor:pointer;
-        ">
-            <input type="radio" name="a" value="${opt}">
-            ${opt}
-        </label>
-    `;
-});
+        q.options.forEach(opt=>{
+            html += `
+                <label>
+                    <input type="radio" name="a" value="${opt}">
+                    ${opt}
+                </label>
+            `;
+        });
 
-document.getElementById("options").innerHTML = html;
+        document.getElementById("options").innerHTML = html;
+
+        // Restore previous answer
+        if(data.answers && data.answers[data.idx]){
+            let selected = data.answers[data.idx];
+            let radios = document.querySelectorAll('input[name="a"]');
+
+            radios.forEach(r=>{
+                if(r.value === selected){
+                    r.checked = true;
+                }
+            });
+        }
+
         document.getElementById("progress").innerText =
-    `Q ${data.idx + 1} / ${data.total}`;
-
-        /* NAV */
+            `Q ${data.idx + 1} / ${data.total}`;
+            // 🔹 Build navigation panel
 let nav = "";
 
-for(let i=0; i<data.total; i++){
+for(let i = 0; i < data.total; i++){
 
     let style = "background:#374151;";
 
-// 🔵 Current
-if(i === data.idx){
-    style = "background:#2563eb;";
-}
+    // Current question
+    if(i === data.idx){
+        style = "background:#2563eb;";
+    }
 
-// 🟢 Answered (ONLY if not flagged)
-else if(data.answers && data.answers[i] && !(data.flagged || []).includes(i)){
-    style = "background:#16a34a;";
-}
+    // Answered (not flagged)
+    else if(data.answers && data.answers[i] && !(data.flagged || []).includes(i)){
+        style = "background:#16a34a;";
+    }
 
-// 🟡 Flagged = yellow (overrides everything except current)
-if(data.flagged && data.flagged.includes(i)){
-    style = "background:#eab308; color:black;";
-}
+    // Flagged
+    if(data.flagged && data.flagged.includes(i)){
+        style = "background:#eab308; color:black;";
+    }
 
     nav += `
         <button onclick="goTo(${i})" style="${style}">
-            ${i+1}
+            ${i + 1}
         </button>
     `;
 }
 
 document.getElementById("nav").innerHTML = nav;
-
-document.getElementById("nav").innerHTML = nav;
-
-        /* PROGRESS */
-        let percent = Math.round((data.idx / data.total) * 100);
-        document.getElementById("progress").innerText = percent + "%";
-        document.getElementById("progressFill").style.width = percent + "%";
     });
-}
-
-/* SELECT OPTION */
-function selectOption(label){
-
-    document.querySelectorAll("#options label").forEach(l=>{
-        l.style.background = "#1e293b";
-    });
-
-    label.style.background = "#2563eb";
-
-    let radio = label.querySelector("input");
-    radio.checked = true;
-
-    document.getElementById("submitBtn").disabled = false;
 }
 
 /* SUBMIT */
 function submitAnswer(){
-    console.log("NEW SUBMIT RUNNING");
+
     let sel = document.querySelector('input[name="a"]:checked');
 
     if(!sel){ return; }
@@ -477,18 +450,8 @@ function goTo(i){
 
 /* FLAG */
 function flagQuestion(){
-    fetch("/flag", {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        // Force slight delay to let backend update index
-        setTimeout(() => {
-            loadQuestion();
-        }, 50);
-
-    });
+    fetch("/flag", { method: "POST" })
+    .then(()=>loadQuestion());
 }
 
 /* REVIEW */
@@ -498,138 +461,22 @@ function showReview(){
     .then(r=>r.json())
     .then(data=>{
 
-let firstUnansweredIndex = data.results.findIndex(r => !r.user);
-
-if(firstUnansweredIndex !== -1){
-
-    document.getElementById("question").innerHTML =
-        "<h3 style='color:#facc15;'>Jumping to next unanswered question...</h3>";
-
-    setTimeout(()=>{
-        fetch("/goto/" + firstUnansweredIndex)
-        .then(()=>loadQuestion());
-    }, 500);
-
-    return;
-}
         let percent = Math.round((data.score / data.total) * 100);
-
-        let readiness = percent >= 60 ? "READY ✅" :
-                        percent >= 55 ? "BORDERLINE ⚠️" :
-                        "NOT READY ❌";
 
         let html = `
         <h2>Score: ${data.score}/${data.total} (${percent}%)</h2>
-        <h3>${readiness}</h3>
         <hr>
         `;
-        html += "<h3>📊 Domain Performance</h3>";
-
-data.domains.forEach(d => {
-
-    let color = "white";
-
-    if(d.score >= 75) color = "lime";
-    else if(d.score >= 60) color = "orange";
-    else color = "red";
-
-    html += `
-        <div style="margin-bottom:5px;">
-            <b>${d.domain}</b>:
-            <span style="color:${color}">
-                ${d.score}% (${d.correct}/${d.total})
-            </span>
-        </div>
-    `;
-});
-
-html += "<hr>";
 
         data.results.forEach((r,i)=>{
-            html += `<div style="margin-bottom:15px;">`;
-            html += `<b>Q${i+1}: ${r.question}</b><br>`;
-
-            r.options.forEach(opt=>{
-                let style="";
-                if(opt===r.correct) style="color:lime;";
-                if(opt===r.user && !r.is_correct) style="color:red;";
-
-                html += `<div style="${style}">${opt}</div>`;
-            });
-
-            html += `<br>${r.explanation}</div><hr>`;
+            html += `<div><b>Q${i+1}:</b> ${r.question}</div>`;
         });
 
         document.getElementById("question").innerHTML = html;
         document.getElementById("options").innerHTML = "";
     });
-    setTimeout(() => {
-    let btn = document.getElementById("submitBtn");
-    if(btn){
-        btn.disabled = false;
-        btn.style.pointerEvents = "auto";
-        btn.style.opacity = "1";
-        console.log("FORCED ENABLE");
-    }
-}, 1000);
-
-}
-function pauseExam(){
-    fetch("/pause", {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        if(!data.success){
-            alert("Pause already used");
-            return;
-        }
-
-        alert("Exam paused for 5 minutes");
-
-        clearInterval(timerInterval);
-        timerInterval = null;
-
-        // Resume after 5 minutes
-        setTimeout(() => {
-            loadQuestion(); // re-sync timer
-        }, 300000); // 5 minutes
-    });
 }
 
-/* EXIT EXAM TO PDF RESULTS */
-function exitExam(){
-    if(!confirm("Exit exam and close this window?")){
-        return;
-    }
-
-    // Stop timer
-    clearInterval(timerInterval);
-    timerInterval = null;
-
-    // Open PDF first (optional but recommended)
-    window.open("/download_pdf", "_blank");
-
-    // Close the exam window
-    setTimeout(() => {
-        window.close();
-    }, 500);
-}
-
-/* PDF */
-function downloadPDF(){
-    window.location.href="/download_pdf";
-}
-setTimeout(() => {
-    let btn = document.getElementById("submitBtn");
-    if(btn){
-        btn.disabled = false;
-        btn.style.pointerEvents = "auto";
-        btn.style.opacity = "1";
-        console.log("FORCED ENABLE");
-    }
-}, 1000);
 </script>
 
 </body>
