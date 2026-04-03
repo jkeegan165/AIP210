@@ -1,0 +1,267 @@
+{  "flashcards": [
+    {
+      "front": {"text": "ANN (Artificial Neural Network)", "language": "en-US"},
+      "back": {"text": "The foundational biologically-inspired computing system consisting of interconnected nodes (neurons) organized in layers.", "language": "en-US"},
+      "hint": {"text": "The 'umbrella term' for all neural architectures.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "CNN (Convolutional Neural Network)", "language": "en-US"},
+      "back": {"text": "A deep learning architecture specialized for processing structured arrays of data, primarily used for image recognition.", "language": "en-US"},
+      "hint": {"text": "Uses 'filters' to detect patterns like edges and shapes.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "RNN (Recurrent Neural Network)", "language": "en-US"},
+      "back": {"text": "A neural network designed for sequential data where the output from previous steps is fed as input to the current step.", "language": "en-US"},
+      "hint": {"text": "Models that have 'memory' of what happened just before.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "LSTM (Long Short-Term Memory)", "language": "en-US"},
+      "back": {"text": "A specialized type of RNN capable of learning long-term dependencies, solving the 'vanishing gradient' problem.", "language": "en-US"},
+      "hint": {"text": "The standard for sequential data before Transformers.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "GAN (Generative Adversarial Network)", "language": "en-US"},
+      "back": {"text": "A system where two neural networks (Generator and Discriminator) compete to create realistic synthetic data.", "language": "en-US"},
+      "hint": {"text": "Often used to create deepfakes or synthetic images.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "TP (True Positive)", "language": "en-US"},
+      "back": {"text": "An outcome where the model correctly predicts the positive class.", "language": "en-US"},
+      "hint": {"text": "The model said 'Yes' and it was actually 'Yes'.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "TN (True Negative)", "language": "en-US"},
+      "back": {"text": "An outcome where the model correctly predicts the negative class.", "language": "en-US"},
+      "hint": {"text": "The model said 'No' and it was actually 'No'.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "FP (False Positive)", "language": "en-US"},
+      "back": {"text": "An outcome where the model incorrectly predicts the positive class (Type I Error).", "language": "en-US"},
+      "hint": {"text": "A 'False Alarm'; calling a safe email 'Spam'.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "FN (False Negative)", "language": "en-US"},
+      "back": {"text": "An outcome where the model incorrectly predicts the negative class (Type II Error).", "language": "en-US"},
+      "hint": {"text": "A 'Miss'; failing to detect a real disease.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Random Forest", "language": "en-US"},
+      "back": {"text": "An ensemble learning method that operates by constructing a multitude of decision trees during training to improve accuracy.", "language": "en-US"},
+      "hint": {"text": "Uses 'bagging' to reduce variance.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Bag of Words (BoW)", "language": "en-US"},
+      "back": {"text": "An NLP text representation that counts word frequency while ignoring grammar and word order.", "language": "en-US"},
+      "hint": {"text": "A simple numerical representation of a document.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "AUC-ROC", "language": "en-US"},
+      "back": {"text": "Area Under the Receiver Operating Characteristic curve; it measures the model's ability to distinguish between classes.", "language": "en-US"},
+      "hint": {"text": "A value of 0.5 means the model is guessing randomly.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Precision Formula", "language": "en-US"},
+      "back": {"text": "$$\\text{Precision} = \\frac{TP}{TP + FP}$$", "language": "en-US"},
+      "hint": {"text": "Focuses on the quality of positive predictions.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Recall Formula", "language": "en-US"},
+      "back": {"text": "$$\\text{Recall} = \\frac{TP}{TP + FN}$$", "language": "en-US"},
+      "hint": {"text": "Focuses on the ability to find all positive instances.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Accuracy Formula", "language": "en-US"},
+      "back": {"text": "$$\\text{Accuracy} = \\frac{TP + TN}{TP + TN + FP + FN}$$", "language": "en-US"},
+      "hint": {"text": "Overall correctness of the model.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "F1 Score", "language": "en-US"},
+      "back": {"text": "The harmonic mean of Precision and Recall, providing a single score that balances both metrics.", "language": "en-US"},
+      "hint": {"text": "Best for imbalanced datasets.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Transformer Architecture", "language": "en-US"},
+      "back": {"text": "A deep learning model that uses 'self-attention' mechanisms, forming the basis for modern LLMs.", "language": "en-US"},
+      "hint": {"text": "The 'T' in ChatGPT.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Transfer Learning", "language": "en-US"},
+      "back": {"text": "An ML technique where a model developed for one task is reused as the starting point for a model on a related task.", "language": "en-US"},
+      "hint": {"text": "Reusing pre-trained knowledge.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Edge AI", "language": "en-US"},
+      "back": {"text": "Running AI algorithms locally on a hardware device rather than in a centralized cloud server.", "language": "en-US"},
+      "hint": {"text": "Reduces latency and improves privacy.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Shared Responsibility Model", "language": "en-US"},
+      "back": {"text": "Cloud provider secures infrastructure; user secures data and model configurations.", "language": "en-US"},
+      "hint": {"text": "Who is responsible for what in the cloud.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Data Residency", "language": "en-US"},
+      "back": {"text": "The physical location where data is stored, often dictated by regulatory requirements (e.g., GDPR).", "language": "en-US"},
+      "hint": {"text": "Crucial for international business compliance.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Model Drift", "language": "en-US"},
+      "back": {"text": "The degradation of a model's predictive power over time due to changes in real-world data.", "language": "en-US"},
+      "hint": {"text": "Why models need periodic retraining.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Human-in-the-Loop (HITL)", "language": "en-US"},
+      "back": {"text": "An ethical design requiring human intervention or oversight in AI decision-making.", "language": "en-US"},
+      "hint": {"text": "Essential for high-stakes AI (Medical/Legal).", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Problem Definition Phase", "language": "en-US"},
+      "back": {"text": "The initial stage of the AI lifecycle where business goals and success metrics (KPIs) are established.", "language": "en-US"},
+      "hint": {"text": "Step 1 of the AI lifecycle.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Exploratory Data Analysis (EDA)", "language": "en-US"},
+      "back": {"text": "Using visual and statistical methods to summarize the main characteristics of a dataset before modeling.", "language": "en-US"},
+      "hint": {"text": "Understanding the 'shape' of your data.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Bias-Variance Tradeoff", "language": "en-US"},
+      "back": {"text": "The tension between a model's simplicity (bias) and its sensitivity to data fluctuations (variance).", "language": "en-US"},
+      "hint": {"text": "Finding the 'sweet spot' for generalization.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Overfitting", "language": "en-US"},
+      "back": {"text": "When a model learns the training data noise too well and fails to generalize to new data.", "language": "en-US"},
+      "hint": {"text": "High training accuracy, low test accuracy.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Underfitting", "language": "en-US"},
+      "back": {"text": "When a model is too simple to capture the underlying pattern of the data.", "language": "en-US"},
+      "hint": {"text": "Poor performance on both training and test data.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Hyperparameter: Learning Rate", "language": "en-US"},
+      "back": {"text": "The step size at each iteration while moving toward a minimum of a loss function.", "language": "en-US"},
+      "hint": {"text": "Determines how fast the model learns.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Loss Function", "language": "en-US"},
+      "back": {"text": "A mathematical formula measuring the difference between the model's prediction and the ground truth.", "language": "en-US"},
+      "hint": {"text": "What the model tries to minimize during training.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Gradient Descent", "language": "en-US"},
+      "back": {"text": "An optimization algorithm used to minimize the loss function.", "language": "en-US"},
+      "hint": {"text": "Walking down the 'error hill'.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Confusion Matrix", "language": "en-US"},
+      "back": {"text": "A table showing TP, TN, FP, and FN for model evaluation.", "language": "en-US"},
+      "hint": {"text": "The foundation for classification metrics.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Black Box Model", "language": "en-US"},
+      "back": {"text": "An AI system whose internal logic is opaque or too complex for humans to interpret.", "language": "en-US"},
+      "hint": {"text": "Lacks explainability.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "White Box Model", "language": "en-US"},
+      "back": {"text": "An AI model (like a Decision Tree) whose logic is easily auditable by humans.", "language": "en-US"},
+      "hint": {"text": "High interpretability.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Tokenization", "language": "en-US"},
+      "back": {"text": "The NLP process of breaking down text into smaller units like words or characters.", "language": "en-US"},
+      "hint": {"text": "The first step in text preprocessing.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Vectorization (Embedding)", "language": "en-US"},
+      "back": {"text": "Converting tokens into numerical arrays (vectors) for mathematical processing.", "language": "en-US"},
+      "hint": {"text": "Turning text into math.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Sentiment Analysis", "language": "en-US"},
+      "back": {"text": "NLP application used to determine the emotional tone (Positive/Negative/Neutral) of text.", "language": "en-US"},
+      "hint": {"text": "Analyzing customer reviews.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Data Anonymization", "language": "en-US"},
+      "back": {"text": "Removing or modifying PII to protect privacy while allowing data analysis.", "language": "en-US"},
+      "hint": {"text": "Privacy-preserving data prep.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "PII Redaction", "language": "en-US"},
+      "back": {"text": "The automated process of removing sensitive information from datasets.", "language": "en-US"},
+      "hint": {"text": "Protects customer identities.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "MLOps", "language": "en-US"},
+      "back": {"text": "Practices that aim to deploy and maintain ML models in production reliably.", "language": "en-US"},
+      "hint": {"text": "DevOps for Machine Learning.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Supervised Learning", "language": "en-US"},
+      "back": {"text": "Learning from labeled data (inputs paired with correct outputs).", "language": "en-US"},
+      "hint": {"text": "The model has a 'teacher'.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Unsupervised Learning", "language": "en-US"},
+      "back": {"text": "Finding hidden patterns or clusters in unlabeled data.", "language": "en-US"},
+      "hint": {"text": "Clustering is a prime example.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Regression", "language": "en-US"},
+      "back": {"text": "Predicting a continuous numerical value.", "language": "en-US"},
+      "hint": {"text": "Example: Predicting house prices.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Classification", "language": "en-US"},
+      "back": {"text": "Predicting a discrete label or category.", "language": "en-US"},
+      "hint": {"text": "Example: Spam vs. Not Spam.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Clustering", "language": "en-US"},
+      "back": {"text": "Grouping similar data points together without pre-existing labels.", "language": "en-US"},
+      "hint": {"text": "Unsupervised grouping.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Reinforcement Learning", "language": "en-US"},
+      "back": {"text": "Learning through a system of rewards and penalties to maximize a cumulative signal.", "language": "en-US"},
+      "hint": {"text": "Agent, Environment, and Reward.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Data Consistency", "language": "en-US"},
+      "back": {"text": "Ensuring data does not conflict across different systems or datasets.", "language": "en-US"},
+      "hint": {"text": "Uniform formatting and logic.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Data Completeness", "language": "en-US"},
+      "back": {"text": "The degree to which all required data points are present (minimizing nulls).", "language": "en-US"},
+      "hint": {"text": "Filling the gaps in your dataset.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Mean Absolute Error (MAE) Formula", "language": "en-US"},
+      "back": {"text": "$$\\text{MAE} = \\frac{1}{n} \\sum_{i=1}^{n} |y_i - \\hat{y}_i|$$", "language": "en-US"},
+      "hint": {"text": "Average of absolute errors.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Root Mean Square Error (RMSE) Formula", "language": "en-US"},
+      "back": {"text": "$$\\text{RMSE} = \\sqrt{\\frac{1}{n} \\sum_{i=1}^{n} (y_i - \\hat{y}_i)^2}$$", "language": "en-US"},
+      "hint": {"text": "Penalizes large errors more than MAE.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Model Explainability (XAI)", "language": "en-US"},
+      "back": {"text": "Techniques allowing humans to understand and trust AI decision-making.", "language": "en-US"},
+      "hint": {"text": "Critical for legal and ethical compliance.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Role-Based Access Control (RBAC)", "language": "en-US"},
+      "back": {"text": "Restricting data and model access based on a user's job role.", "language": "en-US"},
+      "hint": {"text": "Security through internal hierarchy.", "language": "en-US"}
+    },
+    {
+      "front": {"text": "Inference Latency", "language": "en-US"},
+      "back": {"text": "The time it takes for an AI model to process an input and return a result.", "language": "en-US"},
+      "hint": {"text": "The 'speed' of a live AI response.", "language": "en-US"}
+    }
+  ]}

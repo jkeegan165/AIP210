@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Results</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            display: inline-block;
+            min-width: 320px;
+        }
+
+        .pass {
+            color: #22c55e;
+            font-size: 32px;
+        }
+
+        .fail {
+            color: #ef4444;
+            font-size: 32px;
+        }
+
+        #pdfBtn {
+    background: white;
+    color: black;
+    border: 2px solid #22c55e;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#pdfBtn:hover {
+    background: #f0fdf4;
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>Exam Results</h1>
+
+    {% if percent >= 75 %}
+        <div class="pass">✅ PASS</div>
+    {% else %}
+        <div class="fail">❌ FAIL</div>
+    {% endif %}
+
+    <h2>{{ score }}/{{ total }} ({{ percent }}%)</h2>
+
+    <hr>
+
+    <h3>Domain Breakdown</h3>
+
+    {% for d in domains %}
+        <div>{{ d.domain }}: {{ d.score }}%</div>
+    {% endfor %}
+
+    <br><br>
+
+<button onclick="window.open('/download_pdf','_blank')" id="pdfBtn">
+Print Results to PDF
+</button>
+</div>
+
+</body>
+</html>

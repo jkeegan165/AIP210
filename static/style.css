@@ -1,0 +1,98 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f172a;  /* solid dark background */
+    color: white;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 50px);
+    margin-top: 50px;  /* 🔥 THIS FIXES VISIBILITY */
+}
+
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    overflow: auto;
+
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(4px);
+}
+
+.main {
+    flex: 1;
+    padding: 20px;
+    text-align: left;
+    max-width: 900px;
+    margin: 10px auto;
+
+    /* 🔥 CLEAN DARK PANEL */
+    background:
+        linear-gradient(rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.92)),
+        url('/static/mdi_bg.png');
+
+    background-size: 260px;          /* 👈 smaller = subtle */
+    background-repeat: no-repeat;
+    background-position: bottom right; /* 👈 move out of center */
+
+    border-radius: 12px;
+
+    /* 🔥 DEPTH (makes it feel like a real app panel) */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+
+    backdrop-filter: blur(4px);
+}
+label {
+    display:block;
+    margin:8px 0;
+}
+
+button {
+    margin:5px;
+    padding:10px;
+    background:#2563eb;
+    color:white;
+    border:none;
+}
+
+.nav-btn {
+    padding:8px;
+    margin:2px;
+    text-align:center;
+    background:#334155;
+    cursor:pointer;
+}
+
+.nav-btn.current {
+    background:#2563eb;
+}
+
+.nav-btn.flagged {
+    background:#dc2626;
+}
+
+/* PROGRESS BAR */
+.progress-bar {
+    width:100%;
+    height:10px;
+    background:#334155;
+    margin:10px 0;
+}
+
+#progress-fill {
+    height:100%;
+    width:0%;
+    background:#22c55e;
+}
+
+/* TIMER */
+#timer {
+    font-size:18px;
+    margin-bottom:10px;
+}
+
+/* SCORE */
+#score {
+    margin-bottom:10px;
+}
