@@ -279,6 +279,7 @@ button:hover {
 
         <div class="action-bar">
             <button id="startBtn" onclick="startExam()">Begin Exam</button>
+            <button onclick="resumeExam()">Resume Exam</button>
             <button onclick="flagQuestion()">Flag</button>
             <button onclick="showReview()">Review</button>
             <button onclick="downloadPDF()">Print Results to PDF</button>
@@ -349,6 +350,29 @@ function startExam(){
         startTimer();
     })
     .catch(err => console.error("START ERROR:", err));
+}
+
+function resumeExam(){
+
+    fetch("/resume")
+    .then(r => r.json())
+    .then(data => {
+
+        if(!data.success){
+            alert("No saved session found");
+            return;
+        }
+
+        // Reset timer before resuming
+        if(timerInterval){
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        loadQuestion();
+        startTimer();
+    })
+    .catch(err => console.error("Resume error:", err));
 }
 
 /* LOAD QUESTION */
@@ -496,6 +520,17 @@ function exitExam(){
         window.location.href = "/";
     }, 500);
 }
+setInterval(() => {
+    console.log("AUTOSAVE TRIGGERED");
+    fetch("/save", {
+        method: "POST"
+    })
+    .then(() => {
+        console.log("Auto-saved");
+    })
+    .catch(err => console.error("Autosave failed:", err));
+
+}, 15000); // every 15 seconds
 </script>
 
 </body>
