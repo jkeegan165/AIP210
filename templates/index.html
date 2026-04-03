@@ -476,7 +476,26 @@ function showReview(){
         document.getElementById("options").innerHTML = "";
     });
 }
+function exitExam(){
 
+    if(!confirm("Exit exam and download results?")){
+        return;
+    }
+
+    // Stop timer
+    if(timerInterval){
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    // Download PDF
+    window.open("/download_pdf", "_blank");
+
+    // Redirect instead of closing (more reliable)
+    setTimeout(()=>{
+        window.location.href = "/";
+    }, 500);
+}
 </script>
 
 </body>
