@@ -421,6 +421,46 @@ def resume_session():
 
     return jsonify(success=True)
 
+@app.route("/start_incorrect")
+def start_incorrect_exam():
+
+    global LAST_RESULTS
+    results = LAST_RESULTS.get("results", [])
+
+    if not results:
+        return jsonify(success=False, message="No results found")
+
+    # 🔥 find incorrect question indexes
+    incorrect_indexes = [
+        r["index"] for r in results if not r.get("is_correct")
+    ]
+
+    if not incorrect_indexes:
+        return jsonify(success=False, message="No incorrect answers 🎉")
+
+    # 🔹 shuffle + limit
+    import random
+    random.shuffle(incorrect_indexes)
+
+    NUM = min(20, len(incorrect_indexes))
+    selected = incorrect_indexes[:NUM]
+
+    # 🔹 rebuild question bank
+    bank = load_json_questions()
+    bank = dedupe_questions(bank)
+
+    global GLOBAL_QUESTION_BANK
+    GLOBAL_QUESTION_BANK = bank
+
+    # 🔹 reset session
+    session["bank_indexes"] = selected
+    session["idx"] = 0
+    session["answers"] = {}
+    session["flagged"] = []
+    session["start_time"] = time.time()
+
+    return jsonify(success=True, count=len(selected))
+
 @app.route("/start_weak")
 def start_weak_exam():
 
@@ -507,7 +547,8 @@ def store_results():
 
     correct = 0
     domain_stats = {}
-
+    results = []
+    
     for i, q in enumerate(bank):
         user = answers.get(str(i))
         is_correct = user == q["answer"]
@@ -535,9 +576,10 @@ def store_results():
         "score": correct,
         "total": len(bank),
         "percent": percent,
-        "domains": domains
+        "domains": domains,
+        "results": results
     }
-
+    print("🔥 STORED RESULTS:", LAST_RESULTS)
     return jsonify(success=True)
 
 @app.route("/download_pdf")

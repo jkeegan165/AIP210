@@ -4,79 +4,125 @@
     <title>Flashcards</title>
 
     <style>
-        body {
-            margin: 0;
-            background: #0f172a;
-            color: white;
-            font-family: Arial;
 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+    body {
+    margin: 0;
+    background: #0f172a;
+    color: white;
+    font-family: Arial;
 
-            height: 100vh;
-        }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-        h1 {
-            margin-bottom: 10px;
-        }
+    height: 100vh;
+}
 
-        .card {
-            background: #1e293b;
-            border-radius: 12px;
+h1 {
+    margin-bottom: 10px;
+}
 
-            width: 80%;
-            max-width: 900px;
-            height: 60vh;
+.card {
+    background: #1e293b;
+    border-radius: 12px;
 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+    width: 700px;
+    max-width: 90%;
+    height: 60vh;
 
-            padding: 30px;
-            text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-            cursor: pointer;
-        }
+    padding: 30px;
+    text-align: center;
 
-        .question {
-            font-size: 28px;
-        }
+    cursor: pointer;
+    perspective: 1000px;
+}
 
-        .answer {
-            margin-top: 20px;
-            font-size: 22px;
-            color: #22c55e;
-            display: none;
-        }
+.card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
 
-        .hint {
-            margin-top: 15px;
-            font-size: 16px;
-            color: #facc15;
-            display: none;
-        }
+.card-inner.flipped {
+    transform: rotateY(180deg);
+}
 
-        .controls {
-            margin-top: 20px;
-        }
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 
-        button {
-            margin: 5px;
-            padding: 10px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-        .next { background: white; color: black; }
-        .hintBtn { background: orange; color: black; }
-        .shuffle { background: #22c55e; color: black; }
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
 
-    </style>
+.card-front {
+    background: #1e293b;
+    color: white;
+}
+
+.card-back {
+    background: #020617;
+    color: #22c55e;
+    transform: rotateY(180deg);
+}
+
+.question {
+    font-size: 26px;
+    max-width: 90%;
+    line-height: 1.5;
+}
+
+.answer {
+    font-size: 24px;
+    color: #22c55e;
+}
+
+.hint {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #facc15;
+}
+
+#cardContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.controls {
+    margin-top: 20px;
+}
+
+button {
+    margin: 5px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.next { background: white; color: black; }
+.hintBtn { background: orange; color: black; }
+.shuffle { background: #22c55e; color: black; }
+
+</style>
+
 </head>
 
 <body>
@@ -89,31 +135,55 @@
     <button class="hintBtn" onclick="toggleHint()">Hint</button>
     <button class="next" onclick="nextCard()">Next</button>
     <button class="shuffle" onclick="shuffleCards()">Shuffle</button>
+
+    <!-- 🔥 ADD THESE -->
+    <button onclick="markKnow()">✅ Know</button>
+    <button onclick="markDontKnow()">🔁 Don’t Know</button>
 </div>
 
 <script>
 let cards = {{ cards|tojson }};
 let current = 0;
+let showingFront = true;
 
 function renderCard(){
+
+    showingFront = true;  // 🔥 reset flip each card
+
     let c = cards[current];
 
     document.getElementById("cardContainer").innerHTML = `
         <div class="card" onclick="flipCard()">
+    <div class="card-inner" id="cardInner">
+
+        <div class="card-front">
             <div class="question">${c.front.text}</div>
-            <div class="answer" id="answer">${c.back.text}</div>
-            <div class="hint" id="hint">${c.hint ? c.hint.text : ""}</div>
         </div>
+
+        <div class="card-back">
+            <div class="answer">
+                ${c.back.text}
+            </div>
+            <div class="hint" id="hint" style="display:none;">
+                ${c.hint ? c.hint.text : ""}
+            </div>
+        </div>
+
+    </div>
+</div>
     `;
 }
 
 function flipCard(){
-    let a = document.getElementById("answer");
-    a.style.display = (a.style.display === "none") ? "block" : "none";
+    let card = document.getElementById("cardInner");
+    card.classList.toggle("flipped");
 }
 
 function toggleHint(){
     let h = document.getElementById("hint");
+
+    if(!h) return;
+
     h.style.display = (h.style.display === "none") ? "block" : "none";
 }
 
@@ -128,6 +198,35 @@ function shuffleCards(){
         [cards[i], cards[j]] = [cards[j], cards[i]];
     }
     current = 0;
+    renderCard();
+}
+
+function markKnow(){
+
+    // remove card
+    cards.splice(current, 1);
+
+    if(cards.length === 0){
+        alert("All cards mastered 🎉");
+        return;
+    }
+
+    if(current >= cards.length){
+        current = 0;
+    }
+
+    renderCard();
+}
+
+function markDontKnow(){
+
+    let card = cards.splice(current, 1)[0];
+    cards.push(card);
+
+    if(current >= cards.length){
+        current = 0;
+    }
+
     renderCard();
 }
 

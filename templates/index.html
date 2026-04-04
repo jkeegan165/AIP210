@@ -79,8 +79,8 @@ body {
 }
 
 #nav button:hover {
-    background: #2563eb;
-
+    background: #3b82f6;
+    transform: scale(1.05);
 }
 
 /* ===== MAIN CONTENT ===== */
@@ -99,7 +99,12 @@ body {
 .action-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    padding: 10px;
+    background: #111827;
+    border-radius: 8px;
     margin-bottom: 15px;
 }
 
@@ -114,10 +119,10 @@ body {
 
 /* ===== QUESTION ===== */
 #question {
-    font-size: 24px;       /* 👈 bigger */
-    font-weight: 500;      /* 👈 slightly bolder */
-    margin-bottom: 18px;
-    line-height: 1.6;      /* 👈 easier reading */
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.6;
 }
 
 /* ===== OPTIONS ===== */
@@ -154,8 +159,10 @@ body {
 
 /* ===== SUBMIT BUTTON ===== */
 #submitBtn {
-    margin-top: 20px;
     background: #22c55e;
+    color: white;
+    font-weight: bold;
+    border: none;
 }
 
 #submitBtn:disabled {
@@ -428,6 +435,9 @@ function loadQuestion(){
 
         document.getElementById("progress").innerText =
             `Q ${data.idx + 1} / ${data.total}`;
+        let percent = ((data.idx + 1) / data.total) * 100;
+        document.getElementById("progressFill").style.width = percent + "%";
+
             // 🔹 Build navigation panel
 let nav = "";
 
@@ -435,10 +445,10 @@ for(let i = 0; i < data.total; i++){
 
     let style = "background:#374151;";
 
-    // Current question
-    if(i === data.idx){
-        style = "background:#2563eb;";
-    }
+// current question (bright blue)
+if(i === data.idx){
+    style = "background:#3b82f6; transform:scale(1.1);";
+}
 
     // Answered (not flagged)
     else if(data.answers && data.answers[i] && !(data.flagged || []).includes(i)){
@@ -493,6 +503,36 @@ function flagQuestion(){
     fetch("/flag", { method: "POST" })
     .then(()=>loadQuestion());
 }
+
+function startIncorrectExam(){
+
+    console.log("START INCORRECT EXAM");
+
+    // 🔥 Force store results FIRST
+    fetch("/store_results")
+    .then(r => r.json())
+    .then(storeData => {
+
+        console.log("STORE RESULTS:", storeData);
+
+        return fetch("/start_incorrect");
+    })
+    .then(r => r.json())
+    .then(data => {
+
+        console.log("INCORRECT EXAM RESPONSE:", data);
+
+        if(!data.success){
+            alert(data.message || "No incorrect questions");
+            return;
+        }
+
+        loadQuestion();
+        startTimer();
+    })
+    .catch(err => console.error("Incorrect exam error:", err));
+}
+
 /* WEAK AREAS */
 function startWeakExam(){
 
