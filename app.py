@@ -231,47 +231,55 @@ def question():
 
 @app.route("/answer", methods=["POST"])
 def answer():
-    data = request.json
-    idx = session["idx"]
+    try:
+        data = request.get_json(silent=True) or {}
 
-    session["answers"][str(idx)] = data["answer"]
+        # ✅ Safe session reads
+        idx = int(session.get("idx", 0))
+        indexes = session.get("bank_indexes", [])
+        answers = session.get("answers", {})
 
-    # Remove flag if answered
-    flagged = session.get("flagged", [])
-    if idx in flagged:
-        flagged.remove(idx)
+        if not isinstance(answers, dict):
+            answers = {}
+
+        user_answer = data.get("answer")
+        if user_answer is None:
+            return jsonify(success=False, error="No answer provided")
+
+        # ✅ Save answer
+        answers[str(idx)] = user_answer
+        session["answers"] = answers
+
+        # ✅ Remove flag if answered
+        flagged = session.get("flagged", [])
+        if idx in flagged:
+            flagged.remove(idx)
         session["flagged"] = flagged
 
-    indexes = session.get("bank_indexes", [])
-    answers = session.get("answers", {})
-
-    # 🔥 Forward-only navigation
-    next_idx = None
-
-    for i in range(idx + 1, len(indexes)):
-        if str(i) not in answers:
-            next_idx = i
-            break
-
-    # ✅ FIXED BLOCK
-    if next_idx is None:
-
-        all_answered = True
-
-        for i in range(len(indexes)):
+        # 🔁 Find next unanswered question
+        next_idx = None
+        for i in range(idx + 1, len(indexes)):
             if str(i) not in answers:
-                all_answered = False
+                next_idx = i
                 break
 
-        if all_answered:
-            session["idx"] = len(indexes)
+        # ✅ Move index forward correctly
+        if next_idx is None:
+            all_answered = all(str(i) in answers for i in range(len(indexes)))
+            if all_answered:
+                session["idx"] = len(indexes)
+            else:
+                session["idx"] = idx
         else:
-            session["idx"] = idx
+            session["idx"] = next_idx
 
-    else:
-        session["idx"] = next_idx
+        session.modified = True
 
-    return jsonify(success=True)
+        return jsonify(success=True)
+
+    except Exception as e:
+        print("🔥 ERROR IN /answer:", e)
+        return jsonify(success=False, error=str(e)), 500
 
 @app.route("/flag", methods=["POST"])
 def flag():
@@ -400,6 +408,16 @@ def resume_session():
         data = json.load(f)
 
     session.update(data)
+
+    # 🔥 REBUILD QUESTION BANK
+    bank = load_json_questions()
+    bank = dedupe_questions(bank)
+
+    global GLOBAL_QUESTION_BANK
+    GLOBAL_QUESTION_BANK = bank
+
+    # 🔥 CRITICAL FIX: ensure idx is valid
+    session["idx"] = int(session.get("idx", 0))
 
     return jsonify(success=True)
 

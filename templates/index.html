@@ -301,7 +301,7 @@ button:hover {
 </div>
 
 <script>
-
+console.log("REAL TEMPLATE LOADED");
 let totalTime = 7200;
 let timerInterval = null;
 let flagged = new Set();
@@ -354,16 +354,19 @@ function startExam(){
 
 function resumeExam(){
 
+    console.log("RESUME CLICKED");  // debug
+
     fetch("/resume")
     .then(r => r.json())
     .then(data => {
+
+        console.log("RESUME RESPONSE:", data);  // debug
 
         if(!data.success){
             alert("No saved session found");
             return;
         }
 
-        // Reset timer before resuming
         if(timerInterval){
             clearInterval(timerInterval);
             timerInterval = null;
@@ -405,7 +408,11 @@ function loadQuestion(){
         });
 
         document.getElementById("options").innerHTML = html;
-
+            
+        let btn = document.getElementById("submitBtn");
+        if(btn){
+            btn.disabled = false;
+}
         // Restore previous answer
         if(data.answers && data.answers[data.idx]){
             let selected = data.answers[data.idx];
@@ -458,13 +465,21 @@ function submitAnswer(){
 
     let sel = document.querySelector('input[name="a"]:checked');
 
-    if(!sel){ return; }
+    if(!sel){ 
+        alert("Please select an answer");
+        return; 
+    }
 
     fetch("/answer",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({answer:sel.value})
-    }).then(()=>loadQuestion());
+    })
+    .then(res => res.json())
+    .then(data => {
+        loadQuestion();  // 🔥 force refresh after submit
+    })
+    .catch(err => console.error("Submit error:", err));
 }
 
 /* NAV */
@@ -521,7 +536,9 @@ function exitExam(){
     }, 500);
 }
 setInterval(() => {
+
     console.log("AUTOSAVE TRIGGERED");
+
     fetch("/save", {
         method: "POST"
     })
