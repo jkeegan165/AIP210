@@ -279,11 +279,12 @@ button:hover {
 
         <div class="action-bar">
             <button id="startBtn" onclick="startExam()">Begin Exam</button>
+            <button onclick="startWeakExam()">Weak Areas</button>
             <button onclick="resumeExam()">Resume Exam</button>
             <button onclick="flagQuestion()">Flag</button>
             <button onclick="showReview()">Review</button>
-            <button onclick="downloadPDF()">Print Results to PDF</button>
-            <button id="pauseBtn" onclick="pauseExam()">Pause Once (5 min break)</button>
+            <button onclick="downloadPDF()">Print Results PDF</button>
+            <button id="pauseBtn" onclick="pauseExam()">Pause-(5 min break)</button>
 
             <span id="timer">⏱ 120:00</span>
             <span id="progress">0%</span>
@@ -492,6 +493,68 @@ function flagQuestion(){
     fetch("/flag", { method: "POST" })
     .then(()=>loadQuestion());
 }
+/* WEAK AREAS */
+function startWeakExam(){
+
+    console.log("START WEAK EXAM");
+
+    if(timerInterval){
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    // 🔥 FIRST: store results
+    fetch("/store_results")
+    .then(() => {
+
+        // THEN start weak exam
+        return fetch("/start_weak");
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(!data.success){
+            alert("No previous results available yet");
+            return;
+        }
+
+        console.log("WEAK DOMAINS:", data.domains);
+
+        loadQuestion();
+        startTimer();
+    })
+    .catch(err => console.error("Weak exam error:", err));
+}
+
+/* PAUSE 5 MIN BREAK */
+function pauseExam(){
+
+    fetch("/pause", {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(!data.success){
+            alert("Pause already used");
+            return;
+        }
+
+        alert("Exam paused for 5 minutes");
+
+        if(timerInterval){
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        // Resume after 5 minutes
+        setTimeout(() => {
+            loadQuestion();  // re-sync timer
+            startTimer();
+        }, 300000); // 5 minutes
+    })
+    .catch(err => console.error("Pause error:", err));
+}
 
 /* REVIEW */
 function showReview(){
@@ -548,6 +611,11 @@ setInterval(() => {
     .catch(err => console.error("Autosave failed:", err));
 
 }, 15000); // every 15 seconds
+
+function downloadPDF(){
+    window.location.href = "/download_pdf";
+}
+
 </script>
 
 </body>

@@ -421,6 +421,59 @@ def resume_session():
 
     return jsonify(success=True)
 
+@app.route("/start_weak")
+def start_weak_exam():
+
+    session.clear()
+
+    # 🔹 Load and prepare bank
+    bank = load_json_questions()
+    bank = dedupe_questions(bank)
+
+    if not bank:
+        bank = build_question_bank()
+
+    # 🔹 Get last results (already stored)
+    global LAST_RESULTS
+    domains = LAST_RESULTS.get("domains", [])
+
+    if not domains:
+        return jsonify(success=False, message="No prior results")
+
+    # 🔥 Pick weakest 2 domains
+    domains.sort(key=lambda x: x["score"])
+    weakest = [d["domain"] for d in domains[:2]]
+
+    print("WEAK DOMAINS:", weakest)
+
+    # 🔹 Filter questions by weak domains
+    filtered_indexes = [
+        i for i, q in enumerate(bank)
+        if str(q.get("domain", "General")) in weakest
+    ]
+
+    if not filtered_indexes:
+        return jsonify(success=False, message="No weak domain questions found")
+
+    # 🔹 Shuffle and limit
+    import random
+    random.shuffle(filtered_indexes)
+
+    NUM_QUESTIONS = min(30, len(filtered_indexes))
+    selected_indexes = filtered_indexes[:NUM_QUESTIONS]
+
+    # 🔹 Store globally
+    global GLOBAL_QUESTION_BANK
+    GLOBAL_QUESTION_BANK = bank
+
+    # 🔹 Initialize session
+    session["bank_indexes"] = selected_indexes
+    session["idx"] = 0
+    session["answers"] = {}
+    session["flagged"] = []
+    session["start_time"] = time.time()
+
+    return jsonify(success=True, domains=weakest)
 @app.route("/results_page")
 def results_page():
     global LAST_RESULTS
