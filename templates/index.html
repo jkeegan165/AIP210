@@ -99,6 +99,8 @@ body {
 .action-bar {
     display: flex;
     align-items: center;
+    justify-content: space-between;  /* 🔥 key line */
+
     gap: 8px;
     flex-wrap: wrap;
 
@@ -119,10 +121,11 @@ body {
 
 /* ===== QUESTION ===== */
 #question {
-    font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    line-height: 1.6;
+    font-size: clamp(18px, 2.2vw, 24px);
+    line-height: 1.5;
+    margin-bottom: 15px;
+
+    max-width: 90%;
 }
 
 /* ===== OPTIONS ===== */
@@ -263,6 +266,15 @@ button:hover {
     border-radius: 3px;
 }
 
+.flashcard-btn {
+    background: #8b5cf6;   /* purple */
+    color: white;
+    font-weight: bold;
+}
+
+.flashcard-btn:hover {
+    background: #7c3aed;
+}
 </style>
 </head>
 
@@ -296,7 +308,9 @@ button:hover {
             <span id="timer">⏱ 120:00</span>
             <span id="progress">0%</span>
             <button id="exitBtn" onclick="exitExam()">Exit Exam</button>
-            <button onclick="window.open('/flashcards', '_blank')">Flashcards</button>
+            <button class="flashcard-btn" onclick="location.href='/flashcards'">
+                Flashcards
+            </button>
         </div>
 
         <div id="question"></div>
@@ -403,6 +417,17 @@ function loadQuestion(){
         let q = data.q;
 
         document.getElementById("question").innerText = q.prompt;
+
+// 🔥 ADD THIS RIGHT HERE
+let qText = document.getElementById("question");
+
+if(qText.innerText.length > 200){
+    qText.style.fontSize = "18px";
+} else if(qText.innerText.length > 120){
+    qText.style.fontSize = "20px";
+} else {
+    qText.style.fontSize = "22px";
+}
 
         let html = "";
 
@@ -600,8 +625,8 @@ function pauseExam(){
 function showReview(){
 
     fetch("/score")
-    .then(r=>r.json())
-    .then(data=>{
+    .then(r => r.json())
+    .then(data => {
 
         let percent = Math.round((data.score / data.total) * 100);
 
@@ -611,13 +636,46 @@ function showReview(){
         `;
 
         data.results.forEach((r,i)=>{
-            html += `<div><b>Q${i+1}:</b> ${r.question}</div>`;
+
+            let isCorrect = r.is_correct;
+            let userAnswer = r.user || "No Answer";
+            let correctAnswer = r.correct;
+
+            let color = isCorrect ? "#16a34a" : "#ef4444"; // green/red
+
+            html += `
+            <div style="margin-bottom:20px; padding:10px; border-radius:8px; background:#111827;">
+                
+                <b>Q${i+1}:</b> ${r.question}<br><br>
+
+                <div style="color:${color}; font-weight:bold;">
+                    Your Answer: ${userAnswer}
+                </div>
+
+                <div style="color:#22c55e;">
+                    Correct Answer: ${correctAnswer}
+                </div>
+
+                <div style="margin-top:5px; color:${color};">
+                    ${isCorrect ? "✅ Correct" : "❌ Incorrect"}
+                </div>
+
+                ${r.explanation ? `
+                    <div style="margin-top:8px; font-style:italic;">
+                        ${r.explanation}
+                    </div>
+                ` : ""}
+
+            </div>
+            <hr>
+            `;
         });
 
         document.getElementById("question").innerHTML = html;
         document.getElementById("options").innerHTML = "";
     });
 }
+
 function exitExam(){
 
     if(!confirm("Exit exam and download results?")){
